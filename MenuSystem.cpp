@@ -43,6 +43,8 @@ void MenuComponent::set_current(bool is_current)
     _is_current = is_current;
 }
 
+
+
 // *********************************************************
 // Menu
 // *********************************************************
@@ -233,6 +235,101 @@ void Menu::render(MenuComponentRenderer const& renderer) const
     renderer.render_menu(*this);
 }
 
+void Menu::fs_render(MenuComponentRenderer const& renderer) const
+{
+    renderer.fs_menu_render(*this);
+}
+\
+// *********************************************************
+// BigNumberComponent
+// *********************************************************
+
+BigNumberSlider::BigNumberSlider(const char* name,
+                                 uint8_t value, uint8_t minValue, uint8_t maxValue,
+                                 uint8_t increment, uint8_t animation)
+: Menu(name),
+  _value(value),
+  _minValue(minValue),
+  _maxValue(maxValue),
+  _increment(increment),
+  _animation(animation)
+{
+};
+
+Menu* BigNumberSlider::select()
+{
+    return this;
+}
+
+void BigNumberSlider::render(MenuComponentRenderer const& renderer) const
+{
+    renderer.render_big_number_item(*this);
+}
+
+uint8_t BigNumberSlider::get_value() const
+{
+    return _value;
+}
+
+uint8_t BigNumberSlider::get_minValue() const
+{
+    return _minValue;
+}
+
+uint8_t BigNumberSlider::get_maxValue() const
+{
+    return _maxValue;
+}
+
+void BigNumberSlider::set_value(uint8_t value)
+{
+    _value = value;
+}
+
+void BigNumberSlider::set_min_value(uint8_t value)
+{
+    _minValue = value;
+}
+
+void BigNumberSlider::set_max_value(uint8_t value)
+{
+    _maxValue = value;
+}
+
+bool BigNumberSlider::next(bool loop)
+{
+    _value += _increment;
+    if (_value > _maxValue)
+    {
+        if (loop)
+            _value = _minValue;
+        else
+            _value = _maxValue;
+    }
+    return true;
+}
+
+bool BigNumberSlider::prev(bool loop)
+{
+    _value -= _increment;
+    if (_value < _minValue)
+    {
+        if (loop)
+            _value = _maxValue;
+        else
+            _value = _minValue;
+    }
+    return true;
+}
+
+uint8_t BigNumberSlider::get_animation() const{
+    return _animation;
+}
+
+void BigNumberSlider::fs_render(MenuComponentRenderer const& renderer) const{
+    renderer.fs_bignumber_render(*this);
+}
+
 // *********************************************************
 // BackMenuItem
 // *********************************************************
@@ -413,6 +510,7 @@ bool NumericMenuItem::prev(bool loop)
     return true;
 }
 
+
 // *********************************************************
 // MenuSystem
 // *********************************************************
@@ -426,6 +524,7 @@ MenuSystem::MenuSystem(MenuComponentRenderer const& renderer)
 
 bool MenuSystem::next(bool loop)
 {
+    if (_p_curr_menu->_p_current_component==nullptr) return _p_curr_menu->next(loop);
     if (_p_curr_menu->_p_current_component->has_focus())
         return _p_curr_menu->_p_current_component->next(loop);
     else
@@ -434,6 +533,7 @@ bool MenuSystem::next(bool loop)
 
 bool MenuSystem::prev(bool loop)
 {
+    if (_p_curr_menu->_p_current_component==nullptr) return _p_curr_menu->prev(loop);
     if (_p_curr_menu->_p_current_component->has_focus())
         return _p_curr_menu->_p_current_component->prev(loop);
     else

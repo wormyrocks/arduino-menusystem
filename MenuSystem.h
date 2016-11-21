@@ -60,7 +60,6 @@ public:
     //!
     //! \see MenuComponentRenderer
     virtual void render(MenuComponentRenderer const& renderer) const = 0;
-
     //! \brief Returns true if this component has focus; false otherwise
     //!
     //! A component has focus when the next and prev functions are able to
@@ -311,8 +310,8 @@ public:
     uint8_t get_current_component_num() const;
     uint8_t get_previous_component_num() const;
 
-    void render(MenuComponentRenderer const& renderer) const;
-
+    virtual void render(MenuComponentRenderer const& renderer) const;
+    virtual void fs_render(MenuComponentRenderer const& renderer) const;
 protected:
     void set_parent(Menu* pParent);
     Menu const* get_parent() const;
@@ -330,6 +329,40 @@ private:
     uint8_t _num_components;
     uint8_t _current_component_num;
     uint8_t _previous_component_num;
+};
+
+class BigNumberSlider : public Menu
+{
+public:
+
+    BigNumberSlider(const char* name,
+                                 uint8_t value, uint8_t minValue, uint8_t maxValue,
+                                 uint8_t increment, uint8_t animation);
+
+
+    uint8_t get_value() const;
+    uint8_t get_minValue() const;
+    uint8_t get_maxValue() const;
+    uint8_t get_animation() const;
+    
+    void set_value(uint8_t value);
+    void set_min_value(uint8_t value);
+    void set_max_value(uint8_t value);
+    virtual void render(MenuComponentRenderer const& renderer) const;
+    virtual void fs_render(MenuComponentRenderer const& renderer) const;
+
+protected:
+    virtual bool next(bool loop=false);
+    virtual bool prev(bool loop=false);
+    virtual Menu* select();
+
+protected:
+    uint8_t _value;
+    uint8_t _animation;
+    uint8_t _minValue;
+    uint8_t _maxValue;
+    uint8_t _increment;
+
 };
 
 
@@ -359,11 +392,13 @@ class MenuComponentRenderer
 {
 public:
     virtual void render(Menu const& menu) const = 0;
-
     virtual void render_menu_item(MenuItem const& menu_item) const = 0;
     virtual void render_back_menu_item(BackMenuItem const& menu_item) const = 0;
     virtual void render_numeric_menu_item(NumericMenuItem const& menu_item) const = 0;
     virtual void render_menu(Menu const& menu) const = 0;
+    virtual void render_big_number_item(BigNumberSlider const& big_number) const = 0;
+    virtual void fs_bignumber_render(BigNumberSlider const& big_number) const = 0;
+    virtual void fs_menu_render(Menu const& menu) const = 0;
 };
 
 
