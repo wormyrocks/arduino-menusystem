@@ -298,10 +298,14 @@ class Menu : public MenuComponent
 {
     friend class MenuSystem;
 public:
+    using SelectFnPtr = void (*)(Menu *menu);
+
     Menu(const char* name);
 
     void add_item(MenuItem* pItem);
     void add_menu(Menu* pMenu);
+    void hide_n_items(uint8_t n);
+    void show_n_items(uint8_t n);
 
     MenuComponent const* get_current_component() const;
     MenuComponent const* get_menu_component(uint8_t index) const;
@@ -321,6 +325,8 @@ protected:
     virtual bool prev(bool loop=false);
     virtual Menu* select();
     virtual void reset();
+    void set_select_function(SelectFnPtr select_fn); 
+    SelectFnPtr _select_fn;
 
 private:
     MenuComponent* _p_current_component;
@@ -337,7 +343,7 @@ public:
 
     BigNumberSlider(const char* name,
                                  uint8_t value, uint8_t minValue, uint8_t maxValue,
-                                 uint8_t increment, uint8_t animation);
+                                 uint8_t increment, uint8_t animation, SelectFnPtr select_fn);
 
 
     uint8_t get_value() const;

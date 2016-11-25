@@ -177,6 +177,14 @@ void Menu::add_item(MenuItem* pItem)
     _num_components++;
 }
 
+void Menu::hide_n_items(uint8_t n){
+    _num_components -= n;
+}
+
+void Menu::show_n_items(uint8_t n){
+    _num_components += n;
+}
+
 Menu const* Menu::get_parent() const
 {
     return _p_parent;
