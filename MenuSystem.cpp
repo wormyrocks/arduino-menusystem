@@ -134,6 +134,11 @@ Menu* Menu::activate()
     return pComponent->select();
 }
 
+void Menu::set_select_function(SelectFnPtr select_fn)
+{
+    _select_fn = select_fn;
+}
+
 Menu* Menu::select()
 {
     return this;
@@ -246,7 +251,7 @@ void Menu::fs_render(MenuComponentRenderer const& renderer) const
 
 BigNumberSlider::BigNumberSlider(const char* name,
                                  uint8_t value, uint8_t minValue, uint8_t maxValue,
-                                 uint8_t increment, uint8_t animation)
+                                 uint8_t increment, uint8_t animation, SelectFnPtr select_fn)
 : Menu(name),
   _value(value),
   _minValue(minValue),
@@ -254,6 +259,7 @@ BigNumberSlider::BigNumberSlider(const char* name,
   _increment(increment),
   _animation(animation)
 {
+    set_select_function(select_fn);
 };
 
 Menu* BigNumberSlider::select()
@@ -317,7 +323,6 @@ bool BigNumberSlider::prev(bool loop)
         else
             _value = _minValue;
     }else _value -= _increment;
-
     return true;
 }
 
@@ -558,6 +563,7 @@ void MenuSystem::select(bool reset)
 
 bool MenuSystem::back()
 {
+    if (_p_curr_menu->_select_fn != nullptr) _p_curr_menu->_select_fn(_p_curr_menu);
     if (_p_curr_menu != _p_root_menu)
     {
         _p_curr_menu = const_cast<Menu*>(_p_curr_menu->get_parent());
