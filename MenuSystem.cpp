@@ -298,27 +298,26 @@ void BigNumberSlider::set_max_value(uint8_t value)
 
 bool BigNumberSlider::next(bool loop)
 {
-    _value += _increment;
-    if (_value > _maxValue)
+    if (_value == _maxValue)
     {
         if (loop)
             _value = _minValue;
         else
             _value = _maxValue;
-    }
+    }else _value += _increment;
     return true;
 }
 
 bool BigNumberSlider::prev(bool loop)
 {
-    _value -= _increment;
-    if (_value < _minValue)
+    if (_value == _minValue)
     {
         if (loop)
             _value = _maxValue;
         else
             _value = _minValue;
-    }
+    }else _value -= _increment;
+
     return true;
 }
 
